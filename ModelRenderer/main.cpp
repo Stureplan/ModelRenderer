@@ -48,7 +48,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline,
 
 	// setup DX11
 	Graphics gfx;
-	gfx.Initialize(window);
+	gfx.Initialize(window, SHADER_MODEL::AMBIENT_DIFFUSE_SPECULAR);
 
 	MSG msg;
 

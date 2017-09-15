@@ -10,7 +10,7 @@ Graphics::~Graphics()
 
 }
 
-void Graphics::Initialize(HWND window)
+void Graphics::Initialize(HWND window, SHADER_MODEL MODEL)
 {
 	// initialize DX11
 	DXGI_SWAP_CHAIN_DESC desc;
@@ -57,6 +57,50 @@ void Graphics::Initialize(HWND window)
 	viewport.Height = 768;
 
 	context->RSSetViewports(1, &viewport);
+
+	InitializeShader(MODEL);
+
+	model = new Model();
+
+	model->Initialize(device, context, "");
+}
+
+void Graphics::InitializeShader(SHADER_MODEL MODEL)
+{
+	//switch (MODEL)
+	//{
+		//case SHADER_MODEL::AMBIENT_DIFFUSE_SPECULAR:
+
+			ID3DBlob* VS;
+			ID3DBlob* PS;
+
+			D3DX11CompileFromFile(L"shaders.shader", 0, 0, "VertexShader", "vs_4_0", 0, 0, 0, &VS, 0, 0);
+			D3DX11CompileFromFile(L"shaders.shader", 0, 0, "PixelShader",  "ps_4_0", 0, 0, 0, &PS, 0, 0);
+
+			device->CreateVertexShader(VS->GetBufferPointer(), VS->GetBufferSize(), NULL, &pVS);
+			device->CreatePixelShader(PS->GetBufferPointer(), PS->GetBufferSize(), NULL, &pPS);
+
+			context->VSSetShader(pVS, 0, 0);
+			context->PSSetShader(pPS, 0, 0);
+
+			D3D11_INPUT_ELEMENT_DESC ied[] =
+			{
+				{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0}
+			};
+
+			device->CreateInputLayout(ied, 2, VS->GetBufferPointer(), VS->GetBufferSize(), &pLayout);
+			context->IASetInputLayout(pLayout);
+
+			//break;
+
+		//case SHADER_MODEL::PHYSICALLY_BASED_RENDERING:
+
+			//break;
+
+		//default:
+
+			//break;
+	//}
 }
 
 void Graphics::Render()
@@ -66,7 +110,7 @@ void Graphics::Render()
 	context->ClearRenderTargetView(backbuffer, color);
 
 	// render
-	//model->Render();
+	model->Render();
 
 	// swap
 	swapchain->Present(0, 0);
