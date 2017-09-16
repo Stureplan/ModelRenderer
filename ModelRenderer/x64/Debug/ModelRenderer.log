@@ -55,7 +55,8 @@ c:\program files (x86)\microsoft directx sdk (june 2010)\include\d3d10.h(608): w
   c:\program files (x86)\windows kits\8.1\include\shared\winerror.h(50445): note: see previous definition of 'D3D10_ERROR_TOO_MANY_UNIQUE_STATE_OBJECTS'
 c:\program files (x86)\microsoft directx sdk (june 2010)\include\d3d10.h(609): warning C4005: 'D3D10_ERROR_FILE_NOT_FOUND': macro redefinition
   c:\program files (x86)\windows kits\8.1\include\shared\winerror.h(50454): note: see previous definition of 'D3D10_ERROR_FILE_NOT_FOUND'
-c:\users\linus.axelsson3\documents\github\modelrenderer\modelrenderer\model.cpp(26): warning C4267: '=': conversion from 'size_t' to 'UINT', possible loss of data
+c:\users\linus\documents\github\modelrenderer\modelrenderer\model.cpp(45): warning C4267: '=': conversion from 'size_t' to 'UINT', possible loss of data
+c:\users\linus\documents\github\modelrenderer\modelrenderer\model.cpp(78): warning C4267: 'argument': conversion from 'size_t' to 'UINT', possible loss of data
   main.cpp
 c:\program files (x86)\microsoft directx sdk (june 2010)\include\dxgitype.h(12): warning C4005: 'DXGI_STATUS_OCCLUDED': macro redefinition
   c:\program files (x86)\windows kits\8.1\include\shared\winerror.h(50092): note: see previous definition of 'DXGI_STATUS_OCCLUDED'
@@ -113,7 +114,7 @@ c:\program files (x86)\microsoft directx sdk (june 2010)\include\d3d10.h(608): w
   c:\program files (x86)\windows kits\8.1\include\shared\winerror.h(50445): note: see previous definition of 'D3D10_ERROR_TOO_MANY_UNIQUE_STATE_OBJECTS'
 c:\program files (x86)\microsoft directx sdk (june 2010)\include\d3d10.h(609): warning C4005: 'D3D10_ERROR_FILE_NOT_FOUND': macro redefinition
   c:\program files (x86)\windows kits\8.1\include\shared\winerror.h(50454): note: see previous definition of 'D3D10_ERROR_FILE_NOT_FOUND'
-c:\users\linus.axelsson3\documents\github\modelrenderer\modelrenderer\main.cpp(73): warning C4244: 'return': conversion from 'WPARAM' to 'int', possible loss of data
+c:\users\linus\documents\github\modelrenderer\modelrenderer\main.cpp(70): warning C4244: 'return': conversion from 'WPARAM' to 'int', possible loss of data
   graphics.cpp
 c:\program files (x86)\microsoft directx sdk (june 2010)\include\dxgitype.h(12): warning C4005: 'DXGI_STATUS_OCCLUDED': macro redefinition
   c:\program files (x86)\windows kits\8.1\include\shared\winerror.h(50092): note: see previous definition of 'DXGI_STATUS_OCCLUDED'
@@ -172,5 +173,5 @@ c:\program files (x86)\microsoft directx sdk (june 2010)\include\d3d10.h(608): w
 c:\program files (x86)\microsoft directx sdk (june 2010)\include\d3d10.h(609): warning C4005: 'D3D10_ERROR_FILE_NOT_FOUND': macro redefinition
   c:\program files (x86)\windows kits\8.1\include\shared\winerror.h(50454): note: see previous definition of 'D3D10_ERROR_FILE_NOT_FOUND'
   Generating Code...
-  ModelRenderer.vcxproj -> C:\Users\linus.axelsson3\Documents\GitHub\ModelRenderer\x64\Debug\ModelRenderer.exe
-  ModelRenderer.vcxproj -> C:\Users\linus.axelsson3\Documents\GitHub\ModelRenderer\x64\Debug\ModelRenderer.pdb (Full PDB)
+  ModelRenderer.vcxproj -> C:\Users\Linus\Documents\GitHub\ModelRenderer\x64\Debug\ModelRenderer.exe
+  ModelRenderer.vcxproj -> C:\Users\Linus\Documents\GitHub\ModelRenderer\x64\Debug\ModelRenderer.pdb (Full PDB)

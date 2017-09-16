@@ -19,10 +19,13 @@ void Graphics::Initialize(HWND window, SHADER_MODEL MODEL)
 
 	desc.BufferCount = 1;
 	desc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	desc.BufferDesc.Width = W;
+	desc.BufferDesc.Height = H;
 	desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	desc.OutputWindow = window;
 	desc.SampleDesc.Count = 4;
 	desc.Windowed = TRUE;
+	desc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
 	D3D11CreateDeviceAndSwapChain
 	(
@@ -53,16 +56,14 @@ void Graphics::Initialize(HWND window, SHADER_MODEL MODEL)
 
 	viewport.TopLeftX = 0;
 	viewport.TopLeftY = 0;
-	viewport.Width = 1024;
-	viewport.Height = 768;
+	viewport.Width = W;
+	viewport.Height = H;
 
 	context->RSSetViewports(1, &viewport);
 
 	InitializeShader(MODEL);
 
-	model = new Model();
-
-	model->Initialize(device, context, "");
+	model.Initialize(device, context, "");
 }
 
 void Graphics::InitializeShader(SHADER_MODEL MODEL)
@@ -74,8 +75,8 @@ void Graphics::InitializeShader(SHADER_MODEL MODEL)
 			ID3DBlob* VS;
 			ID3DBlob* PS;
 
-			D3DX11CompileFromFile(L"shaders.shader", 0, 0, "VertexShader", "vs_4_0", 0, 0, 0, &VS, 0, 0);
-			D3DX11CompileFromFile(L"shaders.shader", 0, 0, "PixelShader",  "ps_4_0", 0, 0, 0, &PS, 0, 0);
+			D3DX11CompileFromFile(L"shaders.shader", 0, 0, "VShader", "vs_4_0", 0, 0, 0, &VS, 0, 0);
+			D3DX11CompileFromFile(L"shaders.shader", 0, 0, "PShader",  "ps_4_0", 0, 0, 0, &PS, 0, 0);
 
 			device->CreateVertexShader(VS->GetBufferPointer(), VS->GetBufferSize(), NULL, &pVS);
 			device->CreatePixelShader(PS->GetBufferPointer(), PS->GetBufferSize(), NULL, &pPS);
@@ -88,7 +89,7 @@ void Graphics::InitializeShader(SHADER_MODEL MODEL)
 				{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0}
 			};
 
-			device->CreateInputLayout(ied, 2, VS->GetBufferPointer(), VS->GetBufferSize(), &pLayout);
+			device->CreateInputLayout(ied, 1, VS->GetBufferPointer(), VS->GetBufferSize(), &pLayout);
 			context->IASetInputLayout(pLayout);
 
 			//break;
@@ -110,7 +111,7 @@ void Graphics::Render()
 	context->ClearRenderTargetView(backbuffer, color);
 
 	// render
-	model->Render();
+	model.Render();
 
 	// swap
 	swapchain->Present(0, 0);

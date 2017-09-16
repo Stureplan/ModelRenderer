@@ -24,7 +24,7 @@ public:
 
 private:
 	
-	Model* model;
+	Model model;
 
 	// gfx pointers
 	IDXGISwapChain*			swapchain;

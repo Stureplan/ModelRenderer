@@ -4,9 +4,6 @@
 #include <Windows.h>
 #include "graphics.h"
 
-
-//	VARIABLES
-
 //	WEIRD WINDOWS SHIT
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
@@ -28,9 +25,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline,
 
 	RegisterClassEx(&wc);
 
-	RECT rect = { 0, 0, 1024, 768 };
+	RECT rect = { 0, 0, W, H };
 	AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, FALSE);
-
+	
 	window = CreateWindowEx(
 		NULL,
 		L"WindowClass",

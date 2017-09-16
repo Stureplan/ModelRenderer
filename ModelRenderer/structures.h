@@ -1,5 +1,8 @@
 #pragma once
 
+#define W 800
+#define H 600
+
 enum SHADER_MODEL
 {
 	AMBIENT_DIFFUSE_SPECULAR,
@@ -8,7 +11,5 @@ enum SHADER_MODEL
 
 struct VERTEX
 {
-	float X;
-	float Y;
-	float Z;
+	FLOAT X, Y, Z;
 };

@@ -17,6 +17,9 @@ public:
 
 private:
 	std::vector<VERTEX> vertices;
-	ID3D11Buffer*		pVBuffer;
+	std::vector<int>	indices;
 
+	ID3D11Buffer*		modelVertexBuffer;
+	ID3D11Buffer*		modelIndexBuffer;
+	ID3D11DeviceContext* modelContext;
 };
