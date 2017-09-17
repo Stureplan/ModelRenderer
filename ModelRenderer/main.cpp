@@ -2,6 +2,8 @@
 
 //	MASS INCLUDES
 #include <Windows.h>
+#include <shellapi.h>
+
 #include "graphics.h"
 
 //	WEIRD WINDOWS SHIT
@@ -42,6 +44,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline,
 		NULL);
 	
 	ShowWindow(window, iCmdshow);
+
+	int amt;
+	LPWSTR* str = CommandLineToArgvW(GetCommandLine(), &amt);
+
+	std::wstring a = std::wstring(L"DX11 MAYA RENDERER: ");
+	std::wstring tot = a + str[1];
+	if (amt > 1)
+	{
+		SetWindowText(window, tot.c_str());
+	}
 
 	// setup DX11
 	Graphics gfx;

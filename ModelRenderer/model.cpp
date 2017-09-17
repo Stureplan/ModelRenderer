@@ -89,7 +89,6 @@ void Model::Initialize(ID3D11Device* device, ID3D11DeviceContext* context, std::
 	UINT offset = 0;
 	modelContext->IASetVertexBuffers(0, 1, &modelVertexBuffer, &stride, &offset);
 	modelContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
 }
 
 void Model::Render()
