@@ -16,10 +16,10 @@ void Model::Initialize(ID3D11Device* device, ID3D11DeviceContext* context, std::
 
 	vertices =
 	{
-		{ -0.5f, -0.5f, 0.0f},
-		{ -0.5f, 0.5f, 0.0f},
-		{ 0.5f, 0.5f, 0.0f},
-		{ 0.5f, -0.5f, 0.0f}
+		{ -0.5f, -0.5f, 0.5f},
+		{ -0.5f, 0.5f, 0.5f},
+		{ 0.5f, 0.5f, 0.5f},
+		{ 0.5f, -0.5f, 0.5f}
 	};
 
 	indices =
@@ -48,14 +48,7 @@ void Model::Initialize(ID3D11Device* device, ID3D11DeviceContext* context, std::
 	bd.MiscFlags = 0;
 
 	device->CreateBuffer(&bd, NULL, &modelVertexBuffer);
-
-
-	//D3D11_MAPPED_SUBRESOURCE vertexsub;
-	//context->Map(modelVertexBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &vertexsub);
-	//memcpy(vertexsub.pData, vertices.data(), sizeof(vertices));
-	//context->Unmap(modelVertexBuffer, NULL);
 	
-
 
 	D3D11_SUBRESOURCE_DATA indexsub;
 	indexsub.pSysMem = indices.data();
@@ -66,15 +59,18 @@ void Model::Initialize(ID3D11Device* device, ID3D11DeviceContext* context, std::
 	ZeroMemory(&vertexsub, sizeof(vertexsub));
 	vertexsub.pSysMem = vertices.data();
 	device->CreateBuffer(&bd, &vertexsub, &modelVertexBuffer);
+
+	UINT stride = sizeof(VERTEX);
+	UINT offset = 0;
+	modelContext->IASetVertexBuffers(0, 1, &modelVertexBuffer, &stride, &offset);
+	modelContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
 }
 
 void Model::Render()
 {
-	UINT stride = sizeof(VERTEX);
-	UINT offset = 0;
 
-	modelContext->IASetVertexBuffers(0, 1, &modelVertexBuffer, &stride, &offset);
-	modelContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
 	modelContext->DrawIndexed(indices.size(), 0, 0);
 }
 

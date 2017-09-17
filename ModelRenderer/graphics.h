@@ -30,7 +30,9 @@ private:
 	IDXGISwapChain*			swapchain;
 	ID3D11Device*			device;
 	ID3D11DeviceContext*	context;
-	ID3D11RenderTargetView* backbuffer;
+	ID3D11RenderTargetView* renderTarget;
+	ID3D11DepthStencilView* stencil;
+	ID3D11Texture2D*		stencilbuffer;
 
 	// shader stuff
 	ID3D11InputLayout*	pLayout;
