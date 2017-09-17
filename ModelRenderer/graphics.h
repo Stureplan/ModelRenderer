@@ -1,4 +1,6 @@
 #pragma once
+
+#include <dxgi.h>
 #include <d3d11.h>
 #include <d3dx11.h>
 #include <DirectXMath.h>
@@ -9,7 +11,7 @@
 #pragma comment (lib, "d3d11.lib")
 #pragma comment (lib, "d3dx11.lib")
 
-
+using namespace DirectX;
 
 class Graphics
 {
@@ -22,10 +24,28 @@ public:
 	void Render();
 	void Unload();
 
+
+	struct CBUFFER
+	{
+		DirectX::XMMATRIX WVP;
+	};
+
 private:
 	
 	Model model;
 
+
+	DirectX::XMMATRIX WVP;
+	DirectX::XMMATRIX World;
+	DirectX::XMMATRIX View;
+	DirectX::XMMATRIX Projection;
+
+	DirectX::XMVECTOR camPos;
+	DirectX::XMVECTOR camTarget;
+	DirectX::XMVECTOR camUp;
+
+
+private:
 	// gfx pointers
 	IDXGISwapChain*			swapchain;
 	ID3D11Device*			device;
@@ -33,6 +53,9 @@ private:
 	ID3D11RenderTargetView* renderTarget;
 	ID3D11DepthStencilView* stencil;
 	ID3D11Texture2D*		stencilbuffer;
+
+	CBUFFER cBuffer;
+	ID3D11Buffer* constantbuffer;
 
 	// shader stuff
 	ID3D11InputLayout*	pLayout;

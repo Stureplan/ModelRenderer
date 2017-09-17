@@ -16,16 +16,41 @@ void Model::Initialize(ID3D11Device* device, ID3D11DeviceContext* context, std::
 
 	vertices =
 	{
-		{ -0.5f, -0.5f, 0.5f},
-		{ -0.5f, 0.5f, 0.5f},
-		{ 0.5f, 0.5f, 0.5f},
-		{ 0.5f, -0.5f, 0.5f}
+		{-1.0f, -1.0f, -1.0f},
+		{-1.0f, +1.0f, -1.0f},
+		{+1.0f, +1.0f, -1.0f},
+		{+1.0f, -1.0f, -1.0f},
+		{-1.0f, -1.0f, +1.0f},
+		{-1.0f, +1.0f, +1.0f},
+		{+1.0f, +1.0f, +1.0f},
+		{+1.0f, -1.0f, +1.0f}
 	};
 
 	indices =
 	{
+		// front face
 		0, 1, 2,
-		0, 2, 3
+		0, 2, 3,
+
+		// back face
+		4, 6, 5,
+		4, 7, 6,
+
+		// left face
+		4, 5, 1,
+		4, 1, 0,
+
+		// right face
+		3, 2, 6,
+		3, 6, 7,
+
+		// top face
+		1, 5, 6,
+		1, 6, 2,
+
+		// bottom face
+		4, 0, 3,
+		4, 3, 7
 	};
 
 
@@ -33,7 +58,7 @@ void Model::Initialize(ID3D11Device* device, ID3D11DeviceContext* context, std::
 	D3D11_BUFFER_DESC bd = { 0 };
 	ZeroMemory(&bd, sizeof(bd));
 	bd.Usage = D3D11_USAGE_DEFAULT;
-	bd.ByteWidth = sizeof(int) * 2 * 3;
+	bd.ByteWidth = sizeof(int) * 12 * 3;
 	bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	bd.CPUAccessFlags = 0;
 	bd.MiscFlags = 0;
@@ -69,8 +94,6 @@ void Model::Initialize(ID3D11Device* device, ID3D11DeviceContext* context, std::
 
 void Model::Render()
 {
-
-
 	modelContext->DrawIndexed(indices.size(), 0, 0);
 }
 
@@ -79,4 +102,22 @@ void Model::Unload()
 	modelContext->Release();
 	modelIndexBuffer->Release();
 	modelVertexBuffer->Release();
+}
+
+XMMATRIX Model::Matrix()
+{
+	rot += 0.0001f;
+	if (rot > 6.26f)
+	{
+		rot = 0.0f;
+	}
+
+
+	XMVECTOR rotVector = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+	Rotation = XMMatrixRotationAxis(rotVector, rot);
+	Translation = XMMatrixTranslation(0.0f, 0.0f, 0.0f);
+
+	World = XMMatrixIdentity();
+	World = World * Rotation * Translation;
+	return World;
 }

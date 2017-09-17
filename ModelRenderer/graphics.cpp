@@ -90,6 +90,27 @@ void Graphics::Initialize(HWND window, SHADER_MODEL MODEL)
 	viewport.MaxDepth = 1.0f;
 
 	context->RSSetViewports(1, &viewport);
+
+
+	D3D11_BUFFER_DESC cbDesc;
+	ZeroMemory(&cbDesc, sizeof(D3D11_BUFFER_DESC));
+
+	cbDesc.Usage = D3D11_USAGE_DEFAULT;
+	cbDesc.ByteWidth = sizeof(cBuffer);
+	cbDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	cbDesc.CPUAccessFlags = 0;
+	cbDesc.MiscFlags = 0;
+	cbDesc.StructureByteStride = 0;
+
+	device->CreateBuffer(&cbDesc, NULL, &constantbuffer);
+
+	camPos		= XMVectorSet(0.0f, 0.0f, -5.0f, 0.0f);
+	camTarget	= XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	camUp		= XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+
+	World		= XMMatrixIdentity();
+	View		= XMMatrixLookAtLH(camPos, camTarget, camUp);
+	Projection	= XMMatrixPerspectiveFovLH(0.4f * 3.14f, (float)W / (float)H, 1.0f, 1000.0f);
 }
 
 void Graphics::InitializeShader(SHADER_MODEL MODEL)
@@ -135,6 +156,15 @@ void Graphics::Render()
 	float color[4] = { 0.2f, 0.2f, 0.2f, 1.0f };
 	context->ClearRenderTargetView(renderTarget, color);
 	context->ClearDepthStencilView(stencil, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+
+	World = XMMatrixIdentity();
+
+	WVP = model.Matrix() * View * Projection;
+
+	cBuffer.WVP = XMMatrixTranspose(WVP);
+
+	context->UpdateSubresource(constantbuffer, 0, NULL, &cBuffer, 0, 0);
+	context->VSSetConstantBuffers(0, 1, &constantbuffer);
 	
 	// render
 	model.Render();
@@ -145,10 +175,10 @@ void Graphics::Render()
 
 void Graphics::Unload()
 {
-	swapchain	->Release();
-	renderTarget->Release();
-	device		->Release();
-	context		->Release();
-	stencil->Release();
-	stencilbuffer->Release();
+	swapchain		->Release();
+	renderTarget	->Release();
+	device			->Release();
+	context			->Release();
+	stencil			->Release();
+	stencilbuffer	->Release();
 }

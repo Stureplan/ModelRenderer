@@ -3,6 +3,7 @@
 #define W 800
 #define H 600
 
+
 enum SHADER_MODEL
 {
 	AMBIENT_DIFFUSE_SPECULAR,
