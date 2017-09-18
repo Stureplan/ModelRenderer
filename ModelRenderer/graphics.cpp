@@ -10,7 +10,7 @@ Graphics::~Graphics()
 
 }
 
-void Graphics::Initialize(HWND window, SHADER_MODEL MODEL)
+void Graphics::Initialize(HWND window,std::string programpath, std::string meshpath, SHADER_MODEL SHADER_MODEL)
 {
 	DXGI_MODE_DESC bufferDesc;
 
@@ -75,8 +75,9 @@ void Graphics::Initialize(HWND window, SHADER_MODEL MODEL)
 
 	context->OMSetRenderTargets(1, &renderTarget, stencil);
 
-	InitializeShader(MODEL);
-	model.Initialize(device, context, "");
+	InitializeShader(SHADER_MODEL);
+
+	model.LoadMesh(device, context, loader.Load(meshpath));
 
 	// viewport
 	D3D11_VIEWPORT viewport;
@@ -104,7 +105,7 @@ void Graphics::Initialize(HWND window, SHADER_MODEL MODEL)
 
 	device->CreateBuffer(&cbDesc, NULL, &constantbuffer);
 
-	camPos		= XMVectorSet(0.0f, 0.0f, -5.0f, 0.0f);
+	camPos		= XMVectorSet(0.0f, 0.0f, -3.0f, 0.0f);
 	camTarget	= XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	camUp		= XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 
@@ -119,24 +120,22 @@ void Graphics::InitializeShader(SHADER_MODEL MODEL)
 	//{
 		//case SHADER_MODEL::AMBIENT_DIFFUSE_SPECULAR:
 
-			ID3DBlob* VS;
-			ID3DBlob* PS;
-
 			D3DX11CompileFromFile(L"shaders.shader", 0, 0, "VShader", "vs_4_0", 0, 0, 0, &VS, 0, 0);
 			D3DX11CompileFromFile(L"shaders.shader", 0, 0, "PShader",  "ps_4_0", 0, 0, 0, &PS, 0, 0);
-
+			
 			device->CreateVertexShader(VS->GetBufferPointer(), VS->GetBufferSize(), NULL, &pVS);
 			device->CreatePixelShader(PS->GetBufferPointer(), PS->GetBufferSize(), NULL, &pPS);
-
+			
 			context->VSSetShader(pVS, 0, 0);
 			context->PSSetShader(pPS, 0, 0);
-
+			
 			D3D11_INPUT_ELEMENT_DESC ied[] =
 			{
-				{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0}
+				{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+				{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0}
 			};
 
-			device->CreateInputLayout(ied, 1, VS->GetBufferPointer(), VS->GetBufferSize(), &pLayout);
+			device->CreateInputLayout(ied, 2, VS->GetBufferPointer(), VS->GetBufferSize(), &pLayout);
 			context->IASetInputLayout(pLayout);
 			//break;
 
@@ -176,9 +175,13 @@ void Graphics::Render()
 void Graphics::Unload()
 {
 	swapchain		->Release();
-	renderTarget	->Release();
 	device			->Release();
 	context			->Release();
+	renderTarget	->Release();
 	stencil			->Release();
 	stencilbuffer	->Release();
+	constantbuffer	->Release();
+	pLayout			->Release();
+	pVS				->Release();
+	pPS				->Release();
 }

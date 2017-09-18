@@ -5,6 +5,10 @@
 #include <d3dx11.h>
 #include <DirectXMath.h>
 
+#include <Windows.h>
+#include "Shlwapi.h"
+
+#include "loader.h"
 #include "structures.h"
 #include "model.h"
 
@@ -19,7 +23,7 @@ public:
 	Graphics();
 	~Graphics();
 
-	void Initialize(HWND window, SHADER_MODEL MODEL);
+	void Initialize(HWND window, std::string programpath, std::string meshpath, SHADER_MODEL MODEL);
 	void InitializeShader(SHADER_MODEL MODEL);
 	void Render();
 	void Unload();
@@ -33,6 +37,7 @@ public:
 private:
 	
 	Model model;
+	Loader loader;
 
 
 	DirectX::XMMATRIX WVP;
@@ -61,6 +66,9 @@ private:
 	ID3D11InputLayout*	pLayout;
 	ID3D11VertexShader* pVS;
 	ID3D11PixelShader*	pPS;
+
+	ID3D10Blob* VS;
+	ID3D10Blob* PS;
 };
 
 

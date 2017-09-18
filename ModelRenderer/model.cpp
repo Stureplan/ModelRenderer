@@ -10,7 +10,48 @@ Model::~Model()
 
 }
 
-void Model::Initialize(ID3D11Device* device, ID3D11DeviceContext* context, std::string model/*, std::vector<std::string> textures*/)
+void Model::LoadMesh(ID3D11Device* device, ID3D11DeviceContext* context, MESH m)
+{
+	modelContext = context;
+
+	vertices = m.vertices;
+	indices = m.indices;
+
+	D3D11_BUFFER_DESC vDesc = { 0 };
+	vDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	vDesc.ByteWidth = sizeof(VERTEX) * vertices.size();
+	vDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	vDesc.CPUAccessFlags = 0;
+	vDesc.MiscFlags = 0;
+
+	D3D11_SUBRESOURCE_DATA vSub;
+	ZeroMemory(&vSub, sizeof(vSub));
+	vSub.pSysMem = vertices.data();
+	device->CreateBuffer(&vDesc, &vSub, &modelVertexBuffer);
+
+
+	D3D11_BUFFER_DESC iDesc = { 0 };
+	iDesc.Usage = D3D11_USAGE_DEFAULT;
+	iDesc.ByteWidth = sizeof(unsigned int) * indices.size();
+	iDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	iDesc.CPUAccessFlags = 0;
+	iDesc.MiscFlags = 0;
+
+	D3D11_SUBRESOURCE_DATA iSub;
+	ZeroMemory(&iSub, sizeof(iSub));
+	iSub.pSysMem = indices.data();
+	device->CreateBuffer(&iDesc, &iSub, &modelIndexBuffer);
+	context->IASetIndexBuffer(modelIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+
+
+	UINT stride = sizeof(VERTEX);
+	UINT offset = 0;
+
+	modelContext->IASetVertexBuffers(0, 1, &modelVertexBuffer, &stride, &offset);
+	modelContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+}
+
+void Model::InitializeCube(ID3D11Device* device, ID3D11DeviceContext* context, std::string model/*, std::vector<std::string> textures*/)
 {
 	modelContext = context;
 
@@ -58,7 +99,7 @@ void Model::Initialize(ID3D11Device* device, ID3D11DeviceContext* context, std::
 	D3D11_BUFFER_DESC bd = { 0 };
 	ZeroMemory(&bd, sizeof(bd));
 	bd.Usage = D3D11_USAGE_DEFAULT;
-	bd.ByteWidth = sizeof(int) * 12 * 3;
+	bd.ByteWidth = sizeof(unsigned int) * 12 * 3;
 	bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	bd.CPUAccessFlags = 0;
 	bd.MiscFlags = 0;

@@ -3,6 +3,7 @@
 //	MASS INCLUDES
 #include <Windows.h>
 #include <shellapi.h>
+#include <atlstr.h>
 
 #include "graphics.h"
 
@@ -44,20 +45,24 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline,
 		NULL);
 	
 	ShowWindow(window, iCmdshow);
-
+	
 	int amt;
 	LPWSTR* str = CommandLineToArgvW(GetCommandLine(), &amt);
+	std::string path = "export.fbx";
 
-	std::wstring a = std::wstring(L"DX11 MAYA RENDERER: ");
-	std::wstring tot = a + str[1];
 	if (amt > 1)
 	{
-		SetWindowText(window, tot.c_str());
+		//path = CW2A(str[1]).m_psz;
 	}
+
+	std::string text = path;
+	text.insert(0,"DX11 MAYA RENDERER: ");
+
+	SetWindowTextA(window, text.c_str());
 
 	// setup DX11
 	Graphics gfx;
-	gfx.Initialize(window, SHADER_MODEL::AMBIENT_DIFFUSE_SPECULAR);
+	gfx.Initialize(window, CW2A(str[0]).m_psz, path, SHADER_MODEL::AMBIENT_DIFFUSE_SPECULAR);
 
 	MSG msg;
 

@@ -12,5 +12,12 @@ enum SHADER_MODEL
 
 struct VERTEX
 {
-	FLOAT X, Y, Z;
+	float X, Y, Z;
+	float U, V;
+};
+
+struct MESH
+{
+	std::vector<VERTEX> vertices;
+	std::vector<unsigned int> indices;
 };
