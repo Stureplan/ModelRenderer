@@ -12,18 +12,18 @@ Loader::~Loader()
 MESH Loader::Load(std::string path)
 {
 	path.insert(0, "Data/");
-	Assimp::Importer importer;
 	MESH mesh;
 
-	
-	const aiScene* scene = importer.ReadFile(path, aiProcess_ConvertToLeftHanded);
+	const aiScene* scene = aiImportFile("Data/export.fbx", aiProcess_ConvertToLeftHanded);
+
+	aiNode* obj = scene->mRootNode->mChildren[0];
 
 	if (scene == NULL)
 	{
 		//return NULL;
 	}
 
-	for (int i = 0; i < scene->mNumMeshes; i++)
+	for (int i = 0; i < obj->mNumMeshes; i++)
 	{
 		aiMesh* m = scene->mMeshes[i];
 

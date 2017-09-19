@@ -8,14 +8,13 @@
 #pragma comment (lib, "assimp-vc140-mt.lib")
 #endif
 
+#include <assimp\cimport.h>
+#include <assimp\scene.h>
+#include <assimp\postprocess.h>
 
 #include <vector>
 #include <string>
 #include <DirectXMath.h>
-
-#include <..\\AssImp\Importer.hpp>
-#include <..\\AssImp\scene.h>
-#include <..\\AssImp\postprocess.h>
 
 #include "structures.h"
 
