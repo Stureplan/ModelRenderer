@@ -12,6 +12,7 @@ Graphics::~Graphics()
 
 void Graphics::Initialize(HWND window,std::string programpath, std::string meshpath, SHADER_MODEL SHADER_MODEL)
 {
+	win = window;
 	DXGI_MODE_DESC bufferDesc;
 
 	ZeroMemory(&bufferDesc, sizeof(DXGI_MODE_DESC));
@@ -120,9 +121,19 @@ void Graphics::InitializeShader(SHADER_MODEL MODEL)
 	//{
 		//case SHADER_MODEL::AMBIENT_DIFFUSE_SPECULAR:
 
-			D3DX11CompileFromFile(L"shaders.shader", 0, 0, "VShader", "vs_4_0", 0, 0, 0, &VS, 0, 0);
-			D3DX11CompileFromFile(L"shaders.shader", 0, 0, "PShader",  "ps_4_0", 0, 0, 0, &PS, 0, 0);
+			HRESULT r;
+			r = D3DX11CompileFromFileA("C:\\Users\\linus.axelsson3\\Documents\\GitHub\\ModelRenderer\\x64\\Debug\\shaders.shader", 0, 0, "VShader", "vs_4_0", 0, 0, 0, &VS, 0, 0);
+			if (r != S_OK)
+			{
+				MessageBoxA(win, "Vertex Shader failed to load!", "Error", MB_OK);
+			}
 			
+			D3DX11CompileFromFileA("C:\\Users\\linus.axelsson3\\Documents\\GitHub\\ModelRenderer\\x64\\Debug\\shaders.shader", 0, 0, "PShader",  "ps_4_0", 0, 0, 0, &PS, 0, 0);
+			if (r != S_OK)
+			{
+				MessageBoxA(win, "Pixel Shader failed to load!", "Error", MB_OK);
+			}
+
 			device->CreateVertexShader(VS->GetBufferPointer(), VS->GetBufferSize(), NULL, &pVS);
 			device->CreatePixelShader(PS->GetBufferPointer(), PS->GetBufferSize(), NULL, &pPS);
 			

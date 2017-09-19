@@ -11,10 +11,15 @@ Loader::~Loader()
 
 MESH Loader::Load(std::string path)
 {
+	char p[MAX_PATH];
+	GetModuleFileNameA(NULL, p, MAX_PATH + 1);
+
+	MessageBoxA(NULL, p, "Error", MB_OK);
+	
 	path.insert(0, "Data/");
 	MESH mesh;
 
-	const aiScene* scene = aiImportFile("Data/export.fbx", aiProcess_ConvertToLeftHanded);
+	const aiScene* scene = aiImportFile("C:\\Users\\linus.axelsson3\\Documents\\GitHub\\ModelRenderer\\x64\\Debug\\Data\\export.fbx", aiProcess_ConvertToLeftHanded);
 
 	aiNode* obj = scene->mRootNode->mChildren[0];
 

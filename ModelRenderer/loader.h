@@ -12,6 +12,8 @@
 #include <assimp\scene.h>
 #include <assimp\postprocess.h>
 
+#include <Windows.h>
+
 #include <vector>
 #include <string>
 #include <DirectXMath.h>

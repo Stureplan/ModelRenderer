@@ -69,6 +69,8 @@ private:
 
 	ID3D10Blob* VS;
 	ID3D10Blob* PS;
+
+	HWND win;
 };
 
 
