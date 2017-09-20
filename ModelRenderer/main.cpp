@@ -6,6 +6,7 @@
 #include <atlstr.h>
 
 #include "graphics.h"
+#include "network.h"
 
 //	WEIRD WINDOWS SHIT
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
@@ -78,6 +79,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline,
 		}
 		else
 		{
+			std::string msg = "";
+			if (net.Recieve(msg) > 0)
+			{
+				gfx.ParseMessage(msg);
+			}
+
 			gfx.Render();
 		}
 	}

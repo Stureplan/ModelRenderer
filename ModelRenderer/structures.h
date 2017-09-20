@@ -21,3 +21,10 @@ struct MESH
 	std::vector<VERTEX> vertices;
 	std::vector<unsigned int> indices;
 };
+
+struct NET_MESSAGE
+{
+	float x;
+	float y;
+	float z;
+};

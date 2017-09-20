@@ -184,6 +184,8 @@ void Graphics::Render()
 	context->ClearDepthStencilView(stencil, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 	World = XMMatrixIdentity();
+	
+	View = XMMatrixLookAtLH(camPos, camTarget, camUp);
 
 	WVP = model.Matrix() * View * Projection;
 
@@ -197,6 +199,30 @@ void Graphics::Render()
 
 	// swap
 	swapchain->Present(0, 0);
+}
+
+void Graphics::ParseMessage(std::string msg)
+{
+	NET_MESSAGE* message;
+
+	message = (NET_MESSAGE*)msg.c_str();
+
+	float x = message->x;
+	float y = message->y;
+	float z = message->z;
+
+	camPos = XMVectorSet(x, y, z, 0.0f);
+
+	/*std::string pos = std::to_string(z);
+	pos.insert(0, "Z: ");
+	pos.insert(0, std::to_string(y));
+	pos.insert(0, "Y: ");
+
+	pos.insert(0, std::to_string(x));
+	pos.insert(0, "X: ");*/
+
+
+	//SetWindowTextA(win, pos.c_str());
 }
 
 void Graphics::Unload()

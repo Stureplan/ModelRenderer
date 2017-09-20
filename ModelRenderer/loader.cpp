@@ -30,7 +30,7 @@ MESH Loader::Load(std::string filename)
 	fullpath.insert(fullpath.size(), filename);
 
 	MESH mesh;
-
+	
 	const aiScene* scene = aiImportFile(fullpath.c_str(), aiProcess_ConvertToLeftHanded);
 
 	aiNode* obj = scene->mRootNode->mChildren[0];

@@ -17,6 +17,9 @@
 
 using namespace DirectX;
 
+
+
+
 class Graphics
 {
 public:
@@ -28,6 +31,7 @@ public:
 	void Render();
 	void Unload();
 
+	void ParseMessage(std::string msg);
 
 	struct CBUFFER
 	{
@@ -48,7 +52,6 @@ private:
 	DirectX::XMVECTOR camPos;
 	DirectX::XMVECTOR camTarget;
 	DirectX::XMVECTOR camUp;
-
 
 private:
 	// gfx pointers

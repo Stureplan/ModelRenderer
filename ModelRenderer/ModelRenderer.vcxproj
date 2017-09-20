@@ -172,6 +172,7 @@
     <ClInclude Include="graphics.h" />
     <ClInclude Include="loader.h" />
     <ClInclude Include="model.h" />
+    <ClInclude Include="network.h" />
     <ClInclude Include="structures.h" />
   </ItemGroup>
   <ItemGroup>
