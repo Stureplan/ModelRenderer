@@ -13,6 +13,7 @@
 #include <assimp\postprocess.h>
 
 #include <Windows.h>
+#include <Shlwapi.h>
 
 #include <vector>
 #include <string>
@@ -27,7 +28,7 @@ public:
 	Loader();
 	~Loader();
 
-	MESH Load(std::string path);
+	MESH Load(std::string filename);
 	void Unload();
 
 private:

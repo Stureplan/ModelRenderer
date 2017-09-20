@@ -9,17 +9,29 @@ Loader::~Loader()
 
 }
 
-MESH Loader::Load(std::string path)
+MESH Loader::Load(std::string filename)
 {
+	filename.insert(0, "Data\\");	//		\\Data\\abc.fbx
+
+
+	// Full .exe path of program
 	char p[MAX_PATH];
 	GetModuleFileNameA(NULL, p, MAX_PATH + 1);
+	std::string fullpath = p;
 
-	MessageBoxA(NULL, p, "Error", MB_OK);
-	
-	path.insert(0, "Data/");
+	// Only the .exe name (ModelRenderer.exe)
+	std::string f;
+	f = PathFindFileNameA(fullpath.c_str());
+
+	// Remove ModelRenderer.exe from the full path
+	fullpath.erase(fullpath.size() - f.size(), f.size());
+
+	// Insert the shader path
+	fullpath.insert(fullpath.size(), filename);
+
 	MESH mesh;
 
-	const aiScene* scene = aiImportFile("C:\\Users\\linus.axelsson3\\Documents\\GitHub\\ModelRenderer\\x64\\Debug\\Data\\export.fbx", aiProcess_ConvertToLeftHanded);
+	const aiScene* scene = aiImportFile(fullpath.c_str(), aiProcess_ConvertToLeftHanded);
 
 	aiNode* obj = scene->mRootNode->mChildren[0];
 

@@ -121,33 +121,49 @@ void Graphics::InitializeShader(SHADER_MODEL MODEL)
 	//{
 		//case SHADER_MODEL::AMBIENT_DIFFUSE_SPECULAR:
 
-			HRESULT r;
-			r = D3DX11CompileFromFileA("C:\\Users\\linus.axelsson3\\Documents\\GitHub\\ModelRenderer\\x64\\Debug\\shaders.shader", 0, 0, "VShader", "vs_4_0", 0, 0, 0, &VS, 0, 0);
-			if (r != S_OK)
-			{
-				MessageBoxA(win, "Vertex Shader failed to load!", "Error", MB_OK);
-			}
-			
-			D3DX11CompileFromFileA("C:\\Users\\linus.axelsson3\\Documents\\GitHub\\ModelRenderer\\x64\\Debug\\shaders.shader", 0, 0, "PShader",  "ps_4_0", 0, 0, 0, &PS, 0, 0);
-			if (r != S_OK)
-			{
-				MessageBoxA(win, "Pixel Shader failed to load!", "Error", MB_OK);
-			}
+	// Full .exe path of program
+	char p[MAX_PATH];
+	GetModuleFileNameA(NULL, p, MAX_PATH+1);
+	std::string fullpath = p;
 
-			device->CreateVertexShader(VS->GetBufferPointer(), VS->GetBufferSize(), NULL, &pVS);
-			device->CreatePixelShader(PS->GetBufferPointer(), PS->GetBufferSize(), NULL, &pPS);
-			
-			context->VSSetShader(pVS, 0, 0);
-			context->PSSetShader(pPS, 0, 0);
-			
-			D3D11_INPUT_ELEMENT_DESC ied[] =
-			{
-				{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-				{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0}
-			};
+	// Only the .exe name (ModelRenderer.exe)
+	std::string f;
+	f = PathFindFileNameA(fullpath.c_str());
 
-			device->CreateInputLayout(ied, 2, VS->GetBufferPointer(), VS->GetBufferSize(), &pLayout);
-			context->IASetInputLayout(pLayout);
+	// Remove ModelRenderer.exe from the full path
+	fullpath.erase(fullpath.size() - f.size(), f.size());
+
+	// Insert the shader path
+	fullpath.insert(fullpath.size(), "shaders.shader");
+
+
+	HRESULT r;
+	r = D3DX11CompileFromFileA(fullpath.c_str(), 0, 0, "VShader", "vs_4_0", 0, 0, 0, &VS, 0, 0);
+	if (r != S_OK)
+	{
+		MessageBoxA(win, "Vertex Shader failed to load!", "Error", MB_OK);
+	}
+			
+	D3DX11CompileFromFileA(fullpath.c_str(), 0, 0, "PShader",  "ps_4_0", 0, 0, 0, &PS, 0, 0);
+	if (r != S_OK)
+	{
+		MessageBoxA(win, "Pixel Shader failed to load!", "Error", MB_OK);
+	}
+
+	device->CreateVertexShader(VS->GetBufferPointer(), VS->GetBufferSize(), NULL, &pVS);
+	device->CreatePixelShader(PS->GetBufferPointer(), PS->GetBufferSize(), NULL, &pPS);
+			
+	context->VSSetShader(pVS, 0, 0);
+	context->PSSetShader(pPS, 0, 0);
+			
+	D3D11_INPUT_ELEMENT_DESC ied[] =
+	{
+		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0}
+	};
+
+	device->CreateInputLayout(ied, 2, VS->GetBufferPointer(), VS->GetBufferSize(), &pLayout);
+	context->IASetInputLayout(pLayout);
 			//break;
 
 		//case SHADER_MODEL::PHYSICALLY_BASED_RENDERING:

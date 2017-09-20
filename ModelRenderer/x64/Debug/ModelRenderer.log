@@ -1,7 +1,7 @@
 ﻿  loader.cpp
-c:\users\linus.axelsson3\documents\github\modelrenderer\modelrenderer\loader.cpp(32): warning C4018: '<': signed/unsigned mismatch
 c:\users\linus.axelsson3\documents\github\modelrenderer\modelrenderer\loader.cpp(50): warning C4018: '<': signed/unsigned mismatch
-c:\users\linus.axelsson3\documents\github\modelrenderer\modelrenderer\loader.cpp(64): warning C4018: '<': signed/unsigned mismatch
 c:\users\linus.axelsson3\documents\github\modelrenderer\modelrenderer\loader.cpp(68): warning C4018: '<': signed/unsigned mismatch
+c:\users\linus.axelsson3\documents\github\modelrenderer\modelrenderer\loader.cpp(82): warning C4018: '<': signed/unsigned mismatch
+c:\users\linus.axelsson3\documents\github\modelrenderer\modelrenderer\loader.cpp(86): warning C4018: '<': signed/unsigned mismatch
   ModelRenderer.vcxproj -> C:\Users\linus.axelsson3\Documents\GitHub\ModelRenderer\x64\Debug\ModelRenderer.exe
   ModelRenderer.vcxproj -> C:\Users\linus.axelsson3\Documents\GitHub\ModelRenderer\x64\Debug\ModelRenderer.pdb (Full PDB)
