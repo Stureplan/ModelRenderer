@@ -28,7 +28,7 @@ public:
 
 	void Initialize(HWND window, std::string programpath, std::string meshpath, SHADER_MODEL MODEL);
 	void InitializeShader(SHADER_MODEL MODEL);
-	void Render();
+	void Render(double dT, bool debug);
 	void Unload();
 
 	void ParseMessage(std::string msg);

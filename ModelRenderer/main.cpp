@@ -7,16 +7,27 @@
 
 #include "graphics.h"
 #include "network.h"
+#include "input.h"
 
-//	WEIRD WINDOWS SHIT
+//	FUNCTION PROTOTYPES
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+
+void StartTime();
+double Time();
+double FrameTime();
+double cPerSec = 0.0;
+__int64 cStart = 0;
+int frameCount = 0;
+int fps = 0;
+__int64 frameTimeOld = 0;
+double frameTime;
 
 //	MAIN LOOP
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline, int iCmdshow)
 {
 	HWND window;
 	WNDCLASSEX wc;
-
+	
 	ZeroMemory(&wc, sizeof(WNDCLASSEX));
 
 	wc.cbSize = sizeof(WNDCLASSEX);
@@ -64,6 +75,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline,
 	// setup DX11
 	Graphics gfx;
 	gfx.Initialize(window, CW2A(str[0]).m_psz, path, SHADER_MODEL::AMBIENT_DIFFUSE_SPECULAR);
+	bool debug = false;
 
 	MSG msg;
 
@@ -79,13 +91,33 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline,
 		}
 		else
 		{
+			frameCount++;
+			if (Time() > 1.0f)
+			{
+				fps = frameCount;
+				frameCount = 0;
+				StartTime();
+			}
+			
+			frameTime = FrameTime();
+
 			std::string msg = "";
 			if (net.Recieve(msg) > 0)
 			{
 				gfx.ParseMessage(msg);
 			}
 
-			gfx.Render();
+
+			if (input.IsKeyDown(VK_TAB))
+			{
+				debug = true;
+			}
+			else
+			{
+				debug = false;
+			}
+
+			gfx.Render(frameTime, debug);
 		}
 	}
 
@@ -98,6 +130,17 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 {
 	switch (message)
 	{
+		case WM_KEYDOWN:
+		{
+			input.KeyDown((unsigned int)wParam);
+			break;
+		}
+		case WM_KEYUP:
+		{
+			input.KeyUp((unsigned int)wParam);
+			break;
+		}
+
 		case WM_DESTROY:
 		{
 			PostQuitMessage(0);
@@ -108,4 +151,38 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 	}
 
 	return DefWindowProc(hWnd, message, wParam, lParam);
+}
+
+void StartTime()
+{
+	LARGE_INTEGER freqCount;
+	QueryPerformanceFrequency(&freqCount);
+	cPerSec = double(freqCount.QuadPart);
+
+	QueryPerformanceCounter(&freqCount);
+	cStart = freqCount.QuadPart;
+}
+
+double Time()
+{
+	LARGE_INTEGER currTime;
+	QueryPerformanceCounter(&currTime);
+	return double(currTime.QuadPart - cStart) / cPerSec;
+}
+
+double FrameTime()
+{
+	LARGE_INTEGER cTime;
+	__int64 tickCount;
+	QueryPerformanceCounter(&cTime);
+
+	tickCount = cTime.QuadPart - frameTimeOld;
+	frameTimeOld = cTime.QuadPart;
+
+	if (tickCount < 0.0f)
+	{
+		tickCount = 0.0f;
+	}
+
+	return float(tickCount) / cPerSec;
 }

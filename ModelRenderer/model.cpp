@@ -53,7 +53,7 @@ void Model::LoadMesh(ID3D11Device* device, ID3D11DeviceContext* context, MESH m)
 	offset = 0;
 
 	modelContext->IASetVertexBuffers(0, 1, &modelVertexBuffer, &stride, &offset);
-	modelContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	modelContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 }
 
 void Model::LoadBox(ID3D11Device* device, ID3D11DeviceContext* context, MESH b)
@@ -103,8 +103,38 @@ void Model::LoadBox(ID3D11Device* device, ID3D11DeviceContext* context, MESH b)
 	};
 
 
-
 	mesh.indices =
+	{
+		// -z face
+		0, 1, 2, 3, 
+		
+		// intermediary
+		0,
+
+		// -x face
+		4, 5, 1, 0,
+
+		// -y face
+		4, 7, 3, 0,
+
+		// intermediary
+		4,
+
+		// +z face
+		5, 6, 7, 4,
+
+		// +x face
+		7, 6, 2, 3, 
+
+		// intermediary
+		2,
+
+		// +y face
+		1, 5, 6, 2
+	};
+
+
+	/*mesh.indices =
 	{
 		// front face
 		0, 1, 2,
@@ -129,7 +159,7 @@ void Model::LoadBox(ID3D11Device* device, ID3D11DeviceContext* context, MESH b)
 		// bottom face
 		4, 0, 3,
 		4, 3, 7
-	};
+	};*/
 
 	D3D11_BUFFER_DESC vDesc = { 0 };
 	vDesc.Usage = D3D11_USAGE_IMMUTABLE;
@@ -162,7 +192,7 @@ void Model::LoadBox(ID3D11Device* device, ID3D11DeviceContext* context, MESH b)
 	offset = 0;
 
 	modelContext->IASetVertexBuffers(0, 1, &modelVertexBuffer, &stride, &offset);
-	modelContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	modelContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP);
 
 
 	D3D11_RASTERIZER_DESC rd;
@@ -174,8 +204,16 @@ void Model::LoadBox(ID3D11Device* device, ID3D11DeviceContext* context, MESH b)
 
 void Model::Render()
 {
-	if (wireframe) { modelContext->RSSetState(wireFrameState); }
-	else		   { modelContext->RSSetState(NULL); }
+	if (wireframe) 
+	{ 
+		modelContext->RSSetState(wireFrameState); 
+		modelContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP);
+	}
+	else
+	{ 
+		modelContext->RSSetState(NULL); 
+		modelContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	}
 
 
 	modelContext->IASetIndexBuffer(modelIndexBuffer, DXGI_FORMAT_R32_UINT, 0);

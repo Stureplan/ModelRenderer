@@ -179,7 +179,7 @@ void Graphics::InitializeShader(SHADER_MODEL MODEL)
 	//}
 }
 
-void Graphics::Render()
+void Graphics::Render(double dT, bool debug)
 {
 	// clear
 	float color[4] = { 0.2f, 0.2f, 0.2f, 1.0f };
@@ -198,16 +198,20 @@ void Graphics::Render()
 	// render
 	model.Render();
 
-	// prep render
-	World = XMMatrixIdentity();
-	View  = XMMatrixLookAtLH(camPos, camTarget, camUp);
-	WVP   = box.Matrix() * View * Projection;
-	cBuffer.WVP = XMMatrixTranspose(WVP);
+	if (debug)
+	{
+		// prep render
+		World = XMMatrixIdentity();
+		View = XMMatrixLookAtLH(camPos, camTarget, camUp);
+		WVP = box.Matrix() * View * Projection;
+		cBuffer.WVP = XMMatrixTranspose(WVP);
 
-	context->UpdateSubresource(constantbuffer, 0, NULL, &cBuffer, 0, 0);
-	context->VSSetConstantBuffers(0, 1, &constantbuffer);
+		context->UpdateSubresource(constantbuffer, 0, NULL, &cBuffer, 0, 0);
+		context->VSSetConstantBuffers(0, 1, &constantbuffer);
 
-	box.Render();
+		box.Render();
+	}
+
 
 	// swap
 	swapchain->Present(0, 0);
