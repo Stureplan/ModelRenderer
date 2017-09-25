@@ -48,6 +48,8 @@ MESH Loader::Load(std::string filename)
 		mesh = BuildMesh(meshes[i]);
 	}
 
+	scene->~aiScene();
+
 	return mesh;
 }
 
@@ -87,5 +89,8 @@ MESH Loader::BuildMesh(aiMesh* mesh)
 
 void Loader::Unload()
 {
-
+	for (int i = 0; i < meshes.size(); i++)
+	{
+		meshes[i]->~aiMesh();
+	}
 }

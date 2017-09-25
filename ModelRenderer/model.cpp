@@ -139,9 +139,9 @@ void Model::Render()
 
 void Model::Unload()
 {
-	modelContext->Release();
-	modelIndexBuffer->Release();
-	modelVertexBuffer->Release();
+	modelContext		->Release();
+	modelIndexBuffer	->Release();
+	modelVertexBuffer	->Release();
 }
 
 XMMATRIX Model::Matrix()
@@ -154,9 +154,9 @@ XMMATRIX Model::Matrix()
 
 
 	XMVECTOR rotVector = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-	Rotation = XMMatrixRotationAxis(rotVector, rot);
-	Translation = XMMatrixTranslation(0.0f, 0.0f, 0.0f);
-
+	//Rotation = XMMatrixRotationAxis(rotVector, rot);
+	Rotation = XMMatrixIdentity();
+	Translation = XMMatrixIdentity();
 	World = XMMatrixIdentity();
 	World = World * Rotation * Translation;
 	return World;

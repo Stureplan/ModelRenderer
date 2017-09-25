@@ -12,6 +12,8 @@ Graphics::~Graphics()
 
 void Graphics::Initialize(HWND window,std::string programpath, std::string meshpath, SHADER_MODEL SHADER_MODEL)
 {
+	renderTarget = NULL;
+
 	win = window;
 	DXGI_MODE_DESC bufferDesc;
 
@@ -107,7 +109,7 @@ void Graphics::Initialize(HWND window,std::string programpath, std::string meshp
 	device->CreateBuffer(&cbDesc, NULL, &constantbuffer);
 
 	camPos		= XMVectorSet(0.0f, 0.0f, -3.0f, 0.0f);
-	camTarget	= XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	camTarget	= camPos + XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
 	camUp		= XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 
 	World		= XMMatrixIdentity();
@@ -212,21 +214,24 @@ void Graphics::ParseMessage(std::string msg)
 	float z = message->z;
 
 	camPos = XMVectorSet(x, y, z, 0.0f);
+	camTarget = camPos + XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
 
-	/*std::string pos = std::to_string(z);
+	std::string pos = std::to_string(z);
 	pos.insert(0, "Z: ");
 	pos.insert(0, std::to_string(y));
 	pos.insert(0, "Y: ");
 
 	pos.insert(0, std::to_string(x));
-	pos.insert(0, "X: ");*/
+	pos.insert(0, "X: ");
 
 
-	//SetWindowTextA(win, pos.c_str());
+	SetWindowTextA(win, pos.c_str());
 }
 
 void Graphics::Unload()
 {
+	model.Unload();
+
 	swapchain		->Release();
 	device			->Release();
 	context			->Release();
@@ -237,4 +242,8 @@ void Graphics::Unload()
 	pLayout			->Release();
 	pVS				->Release();
 	pPS				->Release();
+	VS				->Release();
+	PS				->Release();
+
+	loader.Unload();
 }
