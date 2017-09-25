@@ -14,25 +14,29 @@ public:
 	~Model();
 
 	void LoadMesh(ID3D11Device* device, ID3D11DeviceContext* context, MESH m);
-	void InitializeCube(ID3D11Device* device, ID3D11DeviceContext* context, std::string model/*, std::vector<std::string> textures*/);
+	void LoadBox(ID3D11Device* device, ID3D11DeviceContext* context, MESH b);
+	MESH GetMesh();
 	void Render();
 	void Unload();
 
 	XMMATRIX Matrix();
 
 private:
-	std::vector<VERTEX>			vertices;
-	std::vector<unsigned int>	indices;
 
 	ID3D11Buffer*		modelVertexBuffer;
 	ID3D11Buffer*		modelIndexBuffer;
-	ID3D11DeviceContext* modelContext;
+	ID3D11DeviceContext* modelContext;	
+
+	ID3D11RasterizerState* wireFrameState;
+	bool wireframe;
 
 	XMMATRIX World;
 	XMMATRIX Rotation;
 	XMMATRIX Translation;
 
 	MESH mesh;
+	UINT stride;
+	UINT offset;
 
 	float rot = 0.0f;
 };

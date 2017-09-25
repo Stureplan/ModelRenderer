@@ -10,64 +10,101 @@ Model::~Model()
 
 }
 
+MESH Model::GetMesh()
+{
+	return mesh;
+}
+
 void Model::LoadMesh(ID3D11Device* device, ID3D11DeviceContext* context, MESH m)
 {
+	wireframe = false;
 	modelContext = context;
 
-	vertices = m.vertices;
-	indices = m.indices;
+	mesh = m;
 
 	D3D11_BUFFER_DESC vDesc = { 0 };
 	vDesc.Usage = D3D11_USAGE_IMMUTABLE;
-	vDesc.ByteWidth = sizeof(VERTEX) * vertices.size();
+	vDesc.ByteWidth = sizeof(VERTEX) * mesh.vertices.size();
 	vDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vDesc.CPUAccessFlags = 0;
 	vDesc.MiscFlags = 0;
 
 	D3D11_SUBRESOURCE_DATA vSub;
 	ZeroMemory(&vSub, sizeof(vSub));
-	vSub.pSysMem = vertices.data();
+	vSub.pSysMem = mesh.vertices.data();
 	device->CreateBuffer(&vDesc, &vSub, &modelVertexBuffer);
 
 
 	D3D11_BUFFER_DESC iDesc = { 0 };
 	iDesc.Usage = D3D11_USAGE_DEFAULT;
-	iDesc.ByteWidth = sizeof(unsigned int) * indices.size();
+	iDesc.ByteWidth = sizeof(unsigned int) * mesh.indices.size();
 	iDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	iDesc.CPUAccessFlags = 0;
 	iDesc.MiscFlags = 0;
 
 	D3D11_SUBRESOURCE_DATA iSub;
 	ZeroMemory(&iSub, sizeof(iSub));
-	iSub.pSysMem = indices.data();
+	iSub.pSysMem = mesh.indices.data();
 	device->CreateBuffer(&iDesc, &iSub, &modelIndexBuffer);
 	context->IASetIndexBuffer(modelIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
 
-	UINT stride = sizeof(VERTEX);
-	UINT offset = 0;
+	stride = sizeof(VERTEX);
+	offset = 0;
 
 	modelContext->IASetVertexBuffers(0, 1, &modelVertexBuffer, &stride, &offset);
 	modelContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
-void Model::InitializeCube(ID3D11Device* device, ID3D11DeviceContext* context, std::string model/*, std::vector<std::string> textures*/)
+void Model::LoadBox(ID3D11Device* device, ID3D11DeviceContext* context, MESH b)
 {
+	wireframe = true;
 	modelContext = context;
 
-	vertices =
+	/*aiVector3D min = aiVector3D(0.0f, 0.0f, 0.0f);
+	aiVector3D max = aiVector3D(0.0f, 0.0f, 0.0f);
+	// should be bounding box --v
+	if (vtx.X < min.x) min.x = vtx.X;
+	if (vtx.Y < min.y) min.y = vtx.Y;
+	if (vtx.Z < min.z) min.z = vtx.Z;
+
+	if (vtx.X > max.x) max.x = vtx.X;
+	if (vtx.Y > max.y) max.y = vtx.Y;
+	if (vtx.Z > max.z) max.z = vtx.Z;*/
+
+
+	VERTEX min = { 0.0f, 0.0f, 0.0f };
+	VERTEX max = { 0.0f, 0.0f, 0.0f };
+
+	// find min & max
+	for (int i = 0; i < b.vertices.size(); i++)
 	{
-		{-1.0f, -1.0f, -1.0f},
-		{-1.0f, +1.0f, -1.0f},
-		{+1.0f, +1.0f, -1.0f},
-		{+1.0f, -1.0f, -1.0f},
-		{-1.0f, -1.0f, +1.0f},
-		{-1.0f, +1.0f, +1.0f},
-		{+1.0f, +1.0f, +1.0f},
-		{+1.0f, -1.0f, +1.0f}
+		VERTEX v = b.vertices[i];
+
+		if (v.X < min.X) min.X = v.X;
+		if (v.Y < min.Y) min.Y = v.Y;
+		if (v.Z < min.Z) min.Z = v.Z;
+
+		if (v.X > max.X) max.X = v.X;
+		if (v.Y > max.Y) max.Y = v.Y;
+		if (v.Z > max.Z) max.Z = v.Z;
+	}
+
+	mesh.vertices =
+	{
+		{ min.X, min.Y, min.Z, 1.0f, 1.0f },
+		{ min.X, max.Y, min.Z, 1.0f, 1.0f },
+		{ max.X, max.Y, min.Z, 1.0f, 1.0f },
+		{ max.X, min.Y, min.Z, 1.0f, 1.0f },
+		{ min.X, min.Y, max.Z, 1.0f, 1.0f },
+		{ min.X, max.Y, max.Z, 1.0f, 1.0f },
+		{ max.X, max.Y, max.Z, 1.0f, 1.0f },
+		{ max.X, min.Y, max.Z, 1.0f, 1.0f }
 	};
 
-	indices =
+
+
+	mesh.indices =
 	{
 		// front face
 		0, 1, 2,
@@ -94,47 +131,57 @@ void Model::InitializeCube(ID3D11Device* device, ID3D11DeviceContext* context, s
 		4, 3, 7
 	};
 
+	D3D11_BUFFER_DESC vDesc = { 0 };
+	vDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	vDesc.ByteWidth = sizeof(VERTEX) * mesh.vertices.size();
+	vDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	vDesc.CPUAccessFlags = 0;
+	vDesc.MiscFlags = 0;
 
-	// init & create index buffer
-	D3D11_BUFFER_DESC bd = { 0 };
-	ZeroMemory(&bd, sizeof(bd));
-	bd.Usage = D3D11_USAGE_DEFAULT;
-	bd.ByteWidth = sizeof(unsigned int) * 12 * 3;
-	bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	bd.CPUAccessFlags = 0;
-	bd.MiscFlags = 0;
+	D3D11_SUBRESOURCE_DATA vSub;
+	ZeroMemory(&vSub, sizeof(vSub));
+	vSub.pSysMem = mesh.vertices.data();
+	device->CreateBuffer(&vDesc, &vSub, &modelVertexBuffer);
 
-	// init & create vertex buffer
-	bd = { 0 };
-	ZeroMemory(&bd, sizeof(bd));
-	bd.Usage = D3D11_USAGE_DEFAULT;
-	bd.ByteWidth = sizeof(VERTEX) * vertices.size();
-	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	bd.CPUAccessFlags = 0;
-	bd.MiscFlags = 0;
 
-	device->CreateBuffer(&bd, NULL, &modelVertexBuffer);
-	
+	D3D11_BUFFER_DESC iDesc = { 0 };
+	iDesc.Usage = D3D11_USAGE_DEFAULT;
+	iDesc.ByteWidth = sizeof(unsigned int) * mesh.indices.size();
+	iDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	iDesc.CPUAccessFlags = 0;
+	iDesc.MiscFlags = 0;
 
-	D3D11_SUBRESOURCE_DATA indexsub;
-	indexsub.pSysMem = indices.data();
-	device->CreateBuffer(&bd, &indexsub, &modelIndexBuffer);
-	context->IASetIndexBuffer(modelIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	D3D11_SUBRESOURCE_DATA iSub;
+	ZeroMemory(&iSub, sizeof(iSub));
+	iSub.pSysMem = mesh.indices.data();
+	device->CreateBuffer(&iDesc, &iSub, &modelIndexBuffer);
+	modelContext->IASetIndexBuffer(modelIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
-	D3D11_SUBRESOURCE_DATA vertexsub;
-	ZeroMemory(&vertexsub, sizeof(vertexsub));
-	vertexsub.pSysMem = vertices.data();
-	device->CreateBuffer(&bd, &vertexsub, &modelVertexBuffer);
 
-	UINT stride = sizeof(VERTEX);
-	UINT offset = 0;
+	stride = sizeof(VERTEX);
+	offset = 0;
+
 	modelContext->IASetVertexBuffers(0, 1, &modelVertexBuffer, &stride, &offset);
 	modelContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+
+	D3D11_RASTERIZER_DESC rd;
+	ZeroMemory(&rd, sizeof(D3D11_RASTERIZER_DESC));
+	rd.FillMode = D3D11_FILL_WIREFRAME;
+	rd.CullMode = D3D11_CULL_NONE;
+	device->CreateRasterizerState(&rd, &wireFrameState);
 }
 
 void Model::Render()
 {
-	modelContext->DrawIndexed(indices.size(), 0, 0);
+	if (wireframe) { modelContext->RSSetState(wireFrameState); }
+	else		   { modelContext->RSSetState(NULL); }
+
+
+	modelContext->IASetIndexBuffer(modelIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	modelContext->IASetVertexBuffers(0, 1, &modelVertexBuffer, &stride, &offset);
+
+	modelContext->DrawIndexed(mesh.indices.size(), 0, 0);
 }
 
 void Model::Unload()
@@ -142,6 +189,7 @@ void Model::Unload()
 	modelContext		->Release();
 	modelIndexBuffer	->Release();
 	modelVertexBuffer	->Release();
+	if (wireframe)wireFrameState		->Release();
 }
 
 XMMATRIX Model::Matrix()

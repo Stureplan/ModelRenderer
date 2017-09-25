@@ -81,6 +81,7 @@ void Graphics::Initialize(HWND window,std::string programpath, std::string meshp
 	InitializeShader(SHADER_MODEL);
 
 	model.LoadMesh(device, context, loader.Load(meshpath));
+	box.LoadBox(device, context, model.GetMesh());
 
 	// viewport
 	D3D11_VIEWPORT viewport;
@@ -185,12 +186,10 @@ void Graphics::Render()
 	context->ClearRenderTargetView(renderTarget, color);
 	context->ClearDepthStencilView(stencil, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
+	// prep render
 	World = XMMatrixIdentity();
-	
-	View = XMMatrixLookAtLH(camPos, camTarget, camUp);
-
-	WVP = model.Matrix() * View * Projection;
-
+	View  = XMMatrixLookAtLH(camPos, camTarget, camUp);
+	WVP   = model.Matrix() * View * Projection;
 	cBuffer.WVP = XMMatrixTranspose(WVP);
 
 	context->UpdateSubresource(constantbuffer, 0, NULL, &cBuffer, 0, 0);
@@ -198,6 +197,17 @@ void Graphics::Render()
 	
 	// render
 	model.Render();
+
+	// prep render
+	World = XMMatrixIdentity();
+	View  = XMMatrixLookAtLH(camPos, camTarget, camUp);
+	WVP   = box.Matrix() * View * Projection;
+	cBuffer.WVP = XMMatrixTranspose(WVP);
+
+	context->UpdateSubresource(constantbuffer, 0, NULL, &cBuffer, 0, 0);
+	context->VSSetConstantBuffers(0, 1, &constantbuffer);
+
+	box.Render();
 
 	// swap
 	swapchain->Present(0, 0);

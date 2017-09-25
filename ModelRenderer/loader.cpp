@@ -11,8 +11,8 @@ Loader::~Loader()
 
 MESH Loader::Load(std::string filename)
 {
-	filename.insert(0, "Data\\");	//		\\Data\\abc.fbx
-
+	//	\\Data\\abc.fbx
+	filename.insert(0, "Data\\");
 
 	// Full .exe path of program
 	char p[MAX_PATH];
@@ -29,16 +29,18 @@ MESH Loader::Load(std::string filename)
 	// Insert the shader path
 	fullpath.insert(fullpath.size(), filename);
 
+
 	MESH mesh;
 	
 	const aiScene* scene = aiImportFile(fullpath.c_str(), aiProcess_ConvertToLeftHanded);
+	if (scene == NULL)
+	{
+		return MESH::EMPTYMESH();
+	}
 
 	aiNode* obj = scene->mRootNode->mChildren[0];
 
-	if (scene == NULL)
-	{
-		//return NULL;
-	}
+
 
 	for (int i = 0; i < obj->mNumMeshes; i++)
 	{
@@ -56,9 +58,10 @@ MESH Loader::Load(std::string filename)
 MESH Loader::BuildMesh(aiMesh* mesh)
 {
 	MESH m;
-
 	std::vector<VERTEX> vertices;
 	std::vector<unsigned int> indices;
+
+
 
 	for (int i = 0; i < mesh->mNumVertices; i++)
 	{
@@ -72,6 +75,8 @@ MESH Loader::BuildMesh(aiMesh* mesh)
 		vtx.V = mesh->mTextureCoords[0][i].y;
 
 		m.vertices.push_back(vtx);
+
+
 	}
 
 	for (int i = 0; i < mesh->mNumFaces; i++)

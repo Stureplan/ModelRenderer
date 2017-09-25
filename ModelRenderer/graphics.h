@@ -41,6 +41,7 @@ public:
 private:
 	
 	Model model;
+	Model box;
 	Loader loader;
 
 

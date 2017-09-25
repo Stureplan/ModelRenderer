@@ -20,6 +20,15 @@ struct MESH
 {
 	std::vector<VERTEX> vertices;
 	std::vector<unsigned int> indices;
+
+	static MESH EMPTYMESH()
+	{
+		MESH m;
+		m.vertices.clear();
+		m.indices.clear();
+
+		return m;
+	}
 };
 
 struct NET_MESSAGE
