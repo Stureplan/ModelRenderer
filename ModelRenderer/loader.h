@@ -36,6 +36,7 @@ private:
 
 private:
 	std::vector<aiMesh*> meshes;
+	const aiScene* scene;
 };
 
 #endif

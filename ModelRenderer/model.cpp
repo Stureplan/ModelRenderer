@@ -53,7 +53,7 @@ void Model::LoadMesh(ID3D11Device* device, ID3D11DeviceContext* context, MESH m)
 	offset = 0;
 
 	modelContext->IASetVertexBuffers(0, 1, &modelVertexBuffer, &stride, &offset);
-	modelContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	modelContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
 void Model::LoadBox(ID3D11Device* device, ID3D11DeviceContext* context, MESH b)
@@ -212,7 +212,7 @@ void Model::Render()
 	else
 	{ 
 		modelContext->RSSetState(NULL); 
-		modelContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+		modelContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	}
 
 
@@ -224,7 +224,7 @@ void Model::Render()
 
 void Model::Unload()
 {
-	modelContext		->Release();
+	//modelContext		->Release();
 	modelIndexBuffer	->Release();
 	modelVertexBuffer	->Release();
 	if (wireframe)wireFrameState		->Release();
@@ -240,8 +240,8 @@ XMMATRIX Model::Matrix()
 
 
 	XMVECTOR rotVector = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-	//Rotation = XMMatrixRotationAxis(rotVector, rot);
-	Rotation = XMMatrixIdentity();
+	Rotation = XMMatrixRotationAxis(rotVector, rot);
+	//Rotation = XMMatrixIdentity();
 	Translation = XMMatrixIdentity();
 	World = XMMatrixIdentity();
 	World = World * Rotation * Translation;

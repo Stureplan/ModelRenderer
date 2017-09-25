@@ -186,6 +186,7 @@ void Graphics::Render(double dT, bool debug)
 	context->ClearRenderTargetView(renderTarget, color);
 	context->ClearDepthStencilView(stencil, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
+
 	// prep render
 	World = XMMatrixIdentity();
 	View  = XMMatrixLookAtLH(camPos, camTarget, camUp);

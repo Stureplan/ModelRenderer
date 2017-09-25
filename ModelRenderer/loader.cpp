@@ -32,14 +32,13 @@ MESH Loader::Load(std::string filename)
 
 	MESH mesh;
 	
-	const aiScene* scene = aiImportFile(fullpath.c_str(), aiProcess_ConvertToLeftHanded);
+	scene = aiImportFile(fullpath.c_str(), aiProcess_ConvertToLeftHanded);
 	if (scene == NULL)
 	{
 		return MESH::EMPTYMESH();
 	}
 
 	aiNode* obj = scene->mRootNode->mChildren[0];
-
 
 
 	for (int i = 0; i < obj->mNumMeshes; i++)
@@ -50,7 +49,6 @@ MESH Loader::Load(std::string filename)
 		mesh = BuildMesh(meshes[i]);
 	}
 
-	scene->~aiScene();
 
 	return mesh;
 }
@@ -97,5 +95,8 @@ void Loader::Unload()
 	for (int i = 0; i < meshes.size(); i++)
 	{
 		meshes[i]->~aiMesh();
+		meshes[i] = NULL;
 	}
+
+	scene->~aiScene();
 }

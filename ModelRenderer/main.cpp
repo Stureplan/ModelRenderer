@@ -2,6 +2,7 @@
 
 //	MASS INCLUDES
 #include <Windows.h>
+#include <Windowsx.h>
 #include <shellapi.h>
 #include <atlstr.h>
 
@@ -117,6 +118,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline,
 				debug = false;
 			}
 
+			if (input.IsKeyDown(VK_ESCAPE))
+			{
+				PostMessage(window, WM_QUIT, 0, 0);
+			}
+
 			gfx.Render(frameTime, debug);
 		}
 	}
@@ -138,6 +144,13 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 		case WM_KEYUP:
 		{
 			input.KeyUp((unsigned int)wParam);
+			break;
+		}
+		case WM_LBUTTONDOWN:
+		{
+			int x = GET_X_LPARAM(lParam);
+			int y = GET_Y_LPARAM(lParam);
+			input.MousePosition(x, y);
 			break;
 		}
 

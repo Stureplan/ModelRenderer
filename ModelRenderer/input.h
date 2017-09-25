@@ -29,7 +29,7 @@ public:
 		return keys[key];
 	}
 
-	void MouseMovement(double x, double y)
+	void MousePosition(int x, int y)
 	{
 
 	}

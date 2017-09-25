@@ -18,6 +18,8 @@
 using namespace DirectX;
 
 
+#define FORWARD XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f)
+
 
 
 class Graphics
