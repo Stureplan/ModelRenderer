@@ -109,7 +109,7 @@ void Graphics::Initialize(HWND window,std::string programpath, std::string meshp
 
 	device->CreateBuffer(&cbDesc, NULL, &constantbuffer);
 
-	camPos		= XMVectorSet(0.0f, 0.0f, -3.0f, 0.0f);
+	camPos		= XMVectorSet(0.0f, 1.0f, -4.0f, 0.0f);
 	camTarget	= camPos + XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
 	camUp		= XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 
