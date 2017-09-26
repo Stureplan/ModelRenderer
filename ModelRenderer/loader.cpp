@@ -40,14 +40,12 @@ MESH Loader::Load(std::string filename)
 
 	aiNode* obj = scene->mRootNode->mChildren[0];
 
-
 	for (int i = 0; i < obj->mNumMeshes; i++)
 	{
-		aiMesh* m = scene->mMeshes[i];
-
-		meshes.push_back(m);
-		mesh = BuildMesh(meshes[i]);
+		meshes.push_back(scene->mMeshes[i]);
 	}
+
+	mesh = BuildMesh(meshes[0]);
 
 
 	return mesh;
@@ -92,11 +90,5 @@ MESH Loader::BuildMesh(aiMesh* mesh)
 
 void Loader::Unload()
 {
-	for (int i = 0; i < meshes.size(); i++)
-	{
-		meshes[i]->~aiMesh();
-		meshes[i] = NULL;
-	}
-
 	scene->~aiScene();
 }
