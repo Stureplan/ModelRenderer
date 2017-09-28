@@ -28,14 +28,13 @@ public:
 	Loader();
 	~Loader();
 
-	MESH Load(std::string filename);
+	MESHINFO LoadModel(std::string filename);
 	void Unload();
 
 private:
-	MESH BuildMesh(aiMesh* mesh);
+	MESHINFO BuildMesh(aiMesh* mesh);
 
 private:
-	std::vector<aiMesh*> meshes;
 	const aiScene* scene;
 };
 

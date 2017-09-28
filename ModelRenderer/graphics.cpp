@@ -72,16 +72,30 @@ void Graphics::Initialize(HWND window,std::string programpath, std::string meshp
 	depthDesc.CPUAccessFlags = 0;
 	depthDesc.MiscFlags = 0;
 	
-
+	// depth stencil view
 	device->CreateTexture2D(&depthDesc, NULL, &stencilbuffer);
 	device->CreateDepthStencilView(stencilbuffer, NULL, &stencil);
-
 	context->OMSetRenderTargets(1, &renderTarget, stencil);
+
+
+	// for textures
+	D3D11_SAMPLER_DESC samplerDesc;
+	ZeroMemory(&samplerDesc, sizeof(samplerDesc));
+	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+	samplerDesc.MinLOD = 0;
+	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+	device->CreateSamplerState(&samplerDesc, &textureSamplerState);
+
+
 
 	InitializeShader(SHADER_MODEL);
 
-	model.LoadMesh(device, context, loader.Load(meshpath));
-	box.LoadBox(device, context, model.GetMesh());
+	model.Mesh(device, context, loader.LoadModel(meshpath));
+	box.Box(device, context, model.GetMesh());
 
 	// viewport
 	D3D11_VIEWPORT viewport;
@@ -109,7 +123,7 @@ void Graphics::Initialize(HWND window,std::string programpath, std::string meshp
 
 	device->CreateBuffer(&cbDesc, NULL, &constantbuffer);
 
-	camPos		= XMVectorSet(0.0f, 1.0f, -4.0f, 0.0f);
+	camPos		= XMVectorSet(0.0f, 1.0f, -6.0f, 0.0f);
 	camTarget	= camPos + XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
 	camUp		= XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 
@@ -195,7 +209,8 @@ void Graphics::Render(double dT, bool debug)
 
 	context->UpdateSubresource(constantbuffer, 0, NULL, &cBuffer, 0, 0);
 	context->VSSetConstantBuffers(0, 1, &constantbuffer);
-	
+	context->PSSetSamplers(0, 1, &textureSamplerState);
+
 	// render
 	model.Render();
 

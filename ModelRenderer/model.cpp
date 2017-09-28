@@ -10,17 +10,18 @@ Model::~Model()
 
 }
 
-MESH Model::GetMesh()
+MESHINFO Model::GetMesh()
 {
 	return mesh;
 }
 
-void Model::LoadMesh(ID3D11Device* device, ID3D11DeviceContext* context, MESH m)
+void Model::Mesh(ID3D11Device* device, ID3D11DeviceContext* context, MESHINFO m)
 {
 	wireframe = false;
 	modelContext = context;
 
 	mesh = m;
+	mesh.textureinfo = m.textureinfo;
 
 	D3D11_BUFFER_DESC vDesc = { 0 };
 	vDesc.Usage = D3D11_USAGE_IMMUTABLE;
@@ -54,9 +55,35 @@ void Model::LoadMesh(ID3D11Device* device, ID3D11DeviceContext* context, MESH m)
 
 	modelContext->IASetVertexBuffers(0, 1, &modelVertexBuffer, &stride, &offset);
 	modelContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	Textures(device, context, mesh.textureinfo);
 }
 
-void Model::LoadBox(ID3D11Device* device, ID3D11DeviceContext* context, MESH b)
+void Model::Textures(ID3D11Device* device, ID3D11DeviceContext* context, TEXTUREINFO t)
+{
+	if (t.HAS_TEXTURE)
+	{
+		ID3D11ShaderResourceView* tex;
+		textures.push_back(tex);
+		D3DX11CreateShaderResourceViewFromFileA(device, t.TEXTURENAMES[0].c_str(), NULL, NULL, &textures[0], NULL);
+	}
+
+	if (t.HAS_NORMALMAP)
+	{
+		ID3D11ShaderResourceView* tex;
+		textures.push_back(tex);
+		D3DX11CreateShaderResourceViewFromFileA(device, t.TEXTURENAMES[1].c_str(), NULL, NULL, &textures[1], NULL);
+	}
+
+	if (t.HAS_SPECULARMAP)
+	{
+		ID3D11ShaderResourceView* tex;
+		textures.push_back(tex);
+		D3DX11CreateShaderResourceViewFromFileA(device, t.TEXTURENAMES[2].c_str(), NULL, NULL, &textures[1], NULL);
+	}
+}
+
+void Model::Box(ID3D11Device* device, ID3D11DeviceContext* context, MESHINFO b)
 {
 	wireframe = true;
 	modelContext = context;
@@ -213,7 +240,13 @@ void Model::Render()
 	{ 
 		modelContext->RSSetState(NULL); 
 		modelContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+		for (unsigned int i = 0; i < textures.size(); i++)
+		{
+			modelContext->PSSetShaderResources(i, 1, &textures[i]);
+		}
 	}
+
 
 
 	modelContext->IASetIndexBuffer(modelIndexBuffer, DXGI_FORMAT_R32_UINT, 0);

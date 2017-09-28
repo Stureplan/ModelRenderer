@@ -13,15 +13,16 @@ public:
 	Model();
 	~Model();
 
-	void LoadMesh(ID3D11Device* device, ID3D11DeviceContext* context, MESH m);
-	void LoadBox(ID3D11Device* device, ID3D11DeviceContext* context, MESH b);
-	MESH GetMesh();
+	void Mesh(ID3D11Device* device, ID3D11DeviceContext* context, MESHINFO m);
+	void Box(ID3D11Device* device, ID3D11DeviceContext* context, MESHINFO b);
+	MESHINFO GetMesh();
 	void Render();
 	void Unload();
 
 	XMMATRIX Matrix();
 
 private:
+	void Textures(ID3D11Device* device, ID3D11DeviceContext* context, TEXTUREINFO t);
 
 	ID3D11Buffer*		modelVertexBuffer;
 	ID3D11Buffer*		modelIndexBuffer;
@@ -30,11 +31,13 @@ private:
 	ID3D11RasterizerState* wireFrameState;
 	bool wireframe;
 
+	std::vector<ID3D11ShaderResourceView*> textures;
+
 	XMMATRIX World;
 	XMMATRIX Rotation;
 	XMMATRIX Translation;
 
-	MESH mesh;
+	MESHINFO mesh;
 	UINT stride;
 	UINT offset;
 

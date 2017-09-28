@@ -192,9 +192,9 @@ double FrameTime()
 	tickCount = cTime.QuadPart - frameTimeOld;
 	frameTimeOld = cTime.QuadPart;
 
-	if (tickCount < 0.0f)
+	if (tickCount < 0.0)
 	{
-		tickCount = 0.0f;
+		tickCount = 0.0;
 	}
 
 	return float(tickCount) / cPerSec;

@@ -68,6 +68,9 @@ private:
 	CBUFFER cBuffer;
 	ID3D11Buffer* constantbuffer;
 
+	// sampler for texteures
+	ID3D11SamplerState* textureSamplerState;
+
 	// shader stuff
 	ID3D11InputLayout*	pLayout;
 	ID3D11VertexShader* pVS;
