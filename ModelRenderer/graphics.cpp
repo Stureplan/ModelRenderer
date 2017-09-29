@@ -96,6 +96,12 @@ void Graphics::Initialize(HWND window,std::string programpath, std::string meshp
 
 	model.Mesh(device, context, loader.LoadModel(meshpath));
 	box.Box(device, context, model.GetMesh());
+	
+	lights[0].Create(XMFLOAT4(-4.0f, 0.0f, 0.0f, 0.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f), 1.0f);
+	//lights[1].Create(XMFLOAT3(-4.0f, 0.0f, 0.0f), COLOR_RED, 1.0f);
+	//lights[2].Create(XMFLOAT3(-4.0f, 0.0f, 0.0f), COLOR_RED, 1.0f);
+	//lights[3].Create(XMFLOAT3(-4.0f, 0.0f, 0.0f), COLOR_RED, 1.0f);
+
 
 	// viewport
 	D3D11_VIEWPORT viewport;
@@ -110,18 +116,28 @@ void Graphics::Initialize(HWND window,std::string programpath, std::string meshp
 
 	context->RSSetViewports(1, &viewport);
 
+	// constant buffer (WVP)
+	D3D11_BUFFER_DESC cb_wvp_Desc;
+	ZeroMemory(&cb_wvp_Desc, sizeof(D3D11_BUFFER_DESC));
+	cb_wvp_Desc.Usage = D3D11_USAGE_DEFAULT;
+	cb_wvp_Desc.ByteWidth = sizeof(cBuffer_matrices);
+	cb_wvp_Desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	cb_wvp_Desc.CPUAccessFlags = 0;
+	cb_wvp_Desc.MiscFlags = 0;
+	cb_wvp_Desc.StructureByteStride = 0;
+	device->CreateBuffer(&cb_wvp_Desc, NULL, &constantbuffer_matrices);
 
-	D3D11_BUFFER_DESC cbDesc;
-	ZeroMemory(&cbDesc, sizeof(D3D11_BUFFER_DESC));
+	// constant buffer (lights)
+	D3D11_BUFFER_DESC cb_lights_Desc;
+	ZeroMemory(&cb_lights_Desc, sizeof(D3D11_BUFFER_DESC));
+	cb_lights_Desc.Usage = D3D11_USAGE_DEFAULT;
+	cb_lights_Desc.ByteWidth = sizeof(cBuffer_lights);
+	cb_lights_Desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	cb_lights_Desc.CPUAccessFlags = 0;
+	cb_lights_Desc.MiscFlags = 0;
+	cb_lights_Desc.StructureByteStride = 0;
+	device->CreateBuffer(&cb_wvp_Desc, NULL, &constantbuffer_lights);
 
-	cbDesc.Usage = D3D11_USAGE_DEFAULT;
-	cbDesc.ByteWidth = sizeof(cBuffer);
-	cbDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	cbDesc.CPUAccessFlags = 0;
-	cbDesc.MiscFlags = 0;
-	cbDesc.StructureByteStride = 0;
-
-	device->CreateBuffer(&cbDesc, NULL, &constantbuffer);
 
 	camPos		= XMVectorSet(0.0f, 1.0f, -6.0f, 0.0f);
 	camTarget	= camPos + XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
@@ -183,11 +199,11 @@ void Graphics::InitializeShader(SHADER_MODEL MODEL)
 			
 	D3D11_INPUT_ELEMENT_DESC ied[] =
 	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{ "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "POSITION",  0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD",  0, DXGI_FORMAT_R32G32_FLOAT,    0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TANGENT",   0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "BITANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 44, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "NORMAL",	   0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 44, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 
 	HRESULT hr=	device->CreateInputLayout(ied, sizeof(ied)/sizeof(ied[0]), VS->GetBufferPointer(), VS->GetBufferSize(), &pLayout);
@@ -216,28 +232,44 @@ void Graphics::Render(double dT, bool debug)
 	World = XMMatrixIdentity();
 	View  = XMMatrixLookAtLH(camPos, camTarget, camUp);
 	WVP   = model.Matrix() * View * Projection;
-	cBuffer.WVP = XMMatrixTranspose(WVP);
 
-	context->UpdateSubresource(constantbuffer, 0, NULL, &cBuffer, 0, 0);
-	context->VSSetConstantBuffers(0, 1, &constantbuffer);
+	// cbuffer wvp
+	cBuffer_matrices.wvp   = XMMatrixTranspose(WVP);
+	cBuffer_matrices.world = XMMatrixTranspose(World);
+	context->UpdateSubresource(constantbuffer_matrices, 0, NULL, &cBuffer_matrices, 0, 0);
+	context->VSSetConstantBuffers(0, 1, &constantbuffer_matrices);
+
+	// cbuffer lights
+	unsigned int lightnumber = sizeof(lights) / sizeof(lights[0]);
+	for (unsigned int i = 0; i < lightnumber; i++)
+	{
+		cBuffer_lights.lights[i] = lights[i].GetLight();
+		cBuffer_lights.lightnumber = lightnumber;
+	}
+	context->UpdateSubresource(constantbuffer_lights, 0, NULL, &cBuffer_lights, 0, 0);
+	context->PSSetConstantBuffers(0, 1, &constantbuffer_lights);
+
 	context->PSSetSamplers(0, 1, &textureSamplerState);
 
 	// render
 	model.Render();
 
-	if (debug)
+	/*if (debug)
 	{
+		// TODO: fix constant buffer updating when debug is true.
+		// right now the matrices are fucked
+
 		// prep render
 		World = XMMatrixIdentity();
 		View = XMMatrixLookAtLH(camPos, camTarget, camUp);
 		WVP = box.Matrix() * View * Projection;
-		cBuffer.WVP = XMMatrixTranspose(WVP);
+		cBuffer_matrices.wvp = XMMatrixTranspose(WVP);
 
-		context->UpdateSubresource(constantbuffer, 0, NULL, &cBuffer, 0, 0);
-		context->VSSetConstantBuffers(0, 1, &constantbuffer);
+		context->UpdateSubresource(constantbuffer_matrices, 0, NULL, &constantbuffer_matrices, 0, 0);
+		context->VSSetConstantBuffers(0, 1, &constantbuffer_matrices);
 
 		box.Render();
-	}
+	}*/
 
 
 	// swap
@@ -279,7 +311,7 @@ void Graphics::Unload()
 	renderTarget	->Release();
 	stencil			->Release();
 	stencilbuffer	->Release();
-	constantbuffer	->Release();
+	constantbuffer_matrices->Release();
 	pLayout			->Release();
 	pVS				->Release();
 	pPS				->Release();

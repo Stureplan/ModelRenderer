@@ -11,6 +11,7 @@
 #include "loader.h"
 #include "structures.h"
 #include "model.h"
+#include "light.h"
 
 #pragma comment (lib, "d3d11.lib")
 #pragma comment (lib, "d3dx11.lib")
@@ -35,15 +36,24 @@ public:
 
 	void ParseMessage(std::string msg);
 
-	struct CBUFFER
+	struct CBUFFER_WVP
 	{
-		DirectX::XMMATRIX WVP;
+		DirectX::XMMATRIX wvp;
+		DirectX::XMMATRIX world;
+	};
+
+	struct CBUFFER_LIGHTS
+	{
+		LIGHT lights[4];
+		unsigned int lightnumber;
 	};
 
 private:
 	
 	Model model;
 	Model box;
+	Light lights[1];
+	
 	Loader loader;
 
 
@@ -65,8 +75,11 @@ private:
 	ID3D11DepthStencilView* stencil;
 	ID3D11Texture2D*		stencilbuffer;
 
-	CBUFFER cBuffer;
-	ID3D11Buffer* constantbuffer;
+	CBUFFER_WVP cBuffer_matrices;
+	ID3D11Buffer* constantbuffer_matrices;
+
+	CBUFFER_LIGHTS cBuffer_lights;
+	ID3D11Buffer* constantbuffer_lights;
 
 	// sampler for texteures
 	ID3D11SamplerState* textureSamplerState;

@@ -3,11 +3,18 @@
 #define W 800
 #define H 600
 
+#include <vector>
 
 enum SHADER_MODEL
 {
 	AMBIENT_DIFFUSE_SPECULAR,
 	PHYSICALLY_BASED_RENDERING
+};
+
+enum LIGHT_TYPE
+{
+	DIRECTIONAL_LIGHT,
+	POINT_LIGHT
 };
 
 struct VERTEX
@@ -18,6 +25,13 @@ struct VERTEX
 	float T_X, T_Y, T_Z;
 	float B_X, B_Y, B_Z;
 	float N_X, N_Y, N_Z;
+};
+
+struct LIGHT
+{
+	float POS_X, POS_Y, POS_Z, POS_W;
+	float COL_R, COL_G, COL_B, COL_A;
+	float INTENSITY;
 };
 
 struct TEXTUREINFO
@@ -38,11 +52,11 @@ struct MESHINFO
 
 	static MESHINFO EMPTYMESH()
 	{
-		MESHINFO m;
-		m.vertices.clear();
-		m.indices.clear();
+		MESHINFO M;
+		M.vertices.clear();
+		M.indices.clear();
 
-		return m;
+		return M;
 	}
 };
 

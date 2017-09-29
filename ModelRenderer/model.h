@@ -5,6 +5,7 @@
 
 #include "structures.h"
 
+
 using namespace DirectX;
 
 class Model
