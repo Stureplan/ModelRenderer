@@ -174,10 +174,11 @@
     <ClInclude Include="loader.h" />
     <ClInclude Include="model.h" />
     <ClInclude Include="network.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="structures.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="shaders.shader" />
+    <None Include="..\x64\Debug\shaders.shader" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

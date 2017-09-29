@@ -155,16 +155,24 @@ void Graphics::InitializeShader(SHADER_MODEL MODEL)
 
 
 	HRESULT r;
-	r = D3DX11CompileFromFileA(fullpath.c_str(), 0, 0, "VShader", "vs_4_0", 0, 0, 0, &VS, 0, 0);
+	ID3D10Blob* blob;
+
+	blob = NULL;
+	r = D3DX11CompileFromFileA(fullpath.c_str(), 0, 0, "VShader", "vs_4_0", 0, 0, 0, &VS, &blob, 0);
 	if (r != S_OK)
 	{
-		MessageBoxA(win, "Vertex Shader failed to load!", "Error", MB_OK);
+		std::string err = static_cast<char*>(blob->GetBufferPointer());
+
+		MessageBoxA(win, err.c_str(), "Error", MB_OK);
 	}
-			
-	D3DX11CompileFromFileA(fullpath.c_str(), 0, 0, "PShader",  "ps_4_0", 0, 0, 0, &PS, 0, 0);
+	
+	blob = NULL;
+	D3DX11CompileFromFileA(fullpath.c_str(), 0, 0, "PShader",  "ps_4_0", 0, 0, 0, &PS, &blob, 0);
 	if (r != S_OK)
 	{
-		MessageBoxA(win, "Pixel Shader failed to load!", "Error", MB_OK);
+		std::string err = static_cast<char*>(blob->GetBufferPointer());
+
+		MessageBoxA(win, err.c_str(), "Error", MB_OK);
 	}
 
 	device->CreateVertexShader(VS->GetBufferPointer(), VS->GetBufferSize(), NULL, &pVS);
@@ -175,11 +183,14 @@ void Graphics::InitializeShader(SHADER_MODEL MODEL)
 			
 	D3D11_INPUT_ELEMENT_DESC ied[] =
 	{
-		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0}
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "BITANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 44, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 
-	device->CreateInputLayout(ied, 2, VS->GetBufferPointer(), VS->GetBufferSize(), &pLayout);
+	HRESULT hr=	device->CreateInputLayout(ied, sizeof(ied)/sizeof(ied[0]), VS->GetBufferPointer(), VS->GetBufferSize(), &pLayout);
 	context->IASetInputLayout(pLayout);
 			//break;
 
