@@ -48,13 +48,21 @@ MESHINFO Loader::LoadModel(std::string filename)
 		aiMaterial* mat = scene->mMaterials[0];
 		aiString path;
 
+		int t = mat->GetTextureCount(aiTextureType_NORMALS);
+		
+		for (int i = 0; i < mat->mNumProperties; i++)
+		{
+			int index = mat->mProperties[i]->mIndex;
+			int b = 1;
+		}
+
 		if (mat->GetTexture(aiTextureType_DIFFUSE, 0, &path) == AI_SUCCESS)
 		{
 			textures.HAS_TEXTURE = true;
 			textures.TEXTURENAMES.push_back(PathFindFileNameA(path.C_Str()));
 		}
-
-		if (mat->GetTexture(aiTextureType_NORMALS, 1, &path) == AI_SUCCESS)
+		
+		if (mat->GetTexture(aiTextureType_NORMALS, 0, &path) == AI_SUCCESS)
 		{
 			textures.HAS_NORMALMAP = true;
 			textures.TEXTURENAMES.push_back(PathFindFileNameA(path.C_Str()));
